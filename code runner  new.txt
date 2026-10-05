@@ -1,0 +1,2117 @@
+Yes. Your existing 15 React pages already cover the **student side + Admin Dashboard**. Your next step should be to expand the Admin Dashboard into separate CRUD management pages instead of putting all admin operations inside `/admin`.
+
+Your existing design already has Course CRUD APIs and Roadmap CRUD APIs, so we can map the new admin pages directly to them.  
+
+# Code Runner – New Admin Pages
+
+I recommend adding these **12 admin pages**:
+
+| #  | Admin Page                | Route                        | Main Purpose                     |
+| -- | ------------------------- | ---------------------------- | -------------------------------- |
+| 1  | Course Management         | `/admin/courses`             | View/search/filter courses       |
+| 2  | Add Course                | `/admin/courses/add`         | Create new course                |
+| 3  | Edit Course               | `/admin/courses/:id/edit`    | Update course                    |
+| 4  | Course Content Management | `/admin/courses/:id/content` | Manage modules & lessons         |
+| 5  | Category Management       | `/admin/categories`          | Add/edit/delete categories       |
+| 6  | Roadmap Management        | `/admin/roadmaps`            | View/search/filter roadmaps      |
+| 7  | Add Roadmap               | `/admin/roadmaps/add`        | Create roadmap                   |
+| 8  | Edit Roadmap              | `/admin/roadmaps/:id/edit`   | Update roadmap                   |
+| 9  | Roadmap Stage Management  | `/admin/roadmaps/:id/stages` | Add/edit/delete stages & courses |
+| 10 | User Management           | `/admin/users`               | Manage students/users            |
+| 11 | Enrollment Management     | `/admin/enrollments`         | Manage enrollments               |
+| 12 | Payment Management        | `/admin/payments`            | Manage payments/transactions     |
+
+This fits your existing database structure: courses have categories, modules and lessons, while roadmaps have stages and roadmap-course mappings.  
+
+---
+
+# 1. Course Management Page
+
+### Route
+
+`/admin/courses`
+
+### APIs
+
+```text
+GET    /api/admin/courses
+GET    /api/courses
+GET    /api/courses/:id
+PATCH  /api/courses/:id/status
+DELETE /api/courses/:id
+```
+
+### UI Components
+
+```text
+Admin Sidebar
+Page Header
+Search Bar
+Category Filter
+Level Filter
+Status Filter
+Price Filter
+Course Table
+Course Thumbnail
+Course Title
+Category
+Instructor
+Price
+Status
+Created Date
+View Button
+Edit Button
+Delete Button
+Publish/Unpublish Button
+Add Course Button
+Pagination
+Delete Confirmation Modal
+```
+
+### Navigation
+
+```text
+Admin Dashboard
+      ↓
+Course Management
+      ├── Add Course
+      ├── View Course
+      ├── Edit Course
+      ├── Course Content
+      └── Delete Course
+```
+
+---
+
+# 2. Add Course Page
+
+### Route
+
+`/admin/courses/add`
+
+### APIs
+
+```text
+POST /api/courses
+GET  /api/categories
+POST /api/upload/course-thumbnail
+```
+
+Your current API list already defines `POST /api/courses`, category APIs, and course-thumbnail upload.  
+
+### UI Components
+
+```text
+Admin Sidebar
+Page Header
+Course Form
+
+Course Title Input
+Description Textarea
+Category Dropdown
+Instructor Dropdown
+Level Dropdown
+Duration Input
+Price Input
+Discount Price Input
+Language Input
+Requirements Textarea
+Learning Objectives Textarea
+
+Course Thumbnail Upload
+Image Preview
+
+Save Draft Button
+Create Course Button
+Cancel Button
+```
+
+### Form Flow
+
+```text
+Enter Course Details
+        ↓
+Upload Thumbnail
+        ↓
+Select Category
+        ↓
+Set Price
+        ↓
+Set Level
+        ↓
+Add Requirements
+        ↓
+Add Learning Objectives
+        ↓
+Save / Create Course
+        ↓
+Course Management
+```
+
+---
+
+# 3. Edit Course Page
+
+### Route
+
+`/admin/courses/:id/edit`
+
+### APIs
+
+```text
+GET /api/courses/:id
+GET /api/categories
+PUT /api/courses/:id
+POST /api/upload/course-thumbnail
+```
+
+### UI Components
+
+```text
+Course Edit Form
+Course Title
+Description
+Category
+Instructor
+Level
+Duration
+Price
+Discount Price
+Language
+Requirements
+Objectives
+Thumbnail
+Status
+
+Update Course Button
+Cancel Button
+Preview Button
+```
+
+### Flow
+
+```text
+Course Management
+       ↓
+Select Course
+       ↓
+Edit
+       ↓
+Load Existing Course
+       ↓
+Modify Details
+       ↓
+PUT /api/courses/:id
+       ↓
+Course Management
+```
+
+---
+
+# 5. Category Management
+
+### Route
+
+`/admin/categories`
+
+### APIs
+
+```text
+GET    /api/categories
+POST   /api/categories
+PUT    /api/categories/:id
+DELETE /api/categories/:id
+```
+
+These CRUD APIs are already present in your project specification. 
+
+### UI Components
+
+```text
+Search Bar
+Category Table
+
+Category Name
+Description
+Image
+Status
+Created Date
+
+Add Category
+Edit Category
+Delete Category
+Activate / Deactivate
+
+Add/Edit Category Modal
+Delete Confirmation Modal
+```
+
+---
+
+# 6. Roadmap Management
+
+### Route
+
+`/admin/roadmaps`
+
+### APIs
+
+```text
+GET    /api/admin/roadmaps
+GET    /api/roadmaps
+GET    /api/roadmaps/:id
+DELETE /api/roadmaps/:id
+```
+
+### UI Components
+
+```text
+Admin Sidebar
+Page Header
+Search Bar
+Category Filter
+Level Filter
+Status Filter
+
+Roadmap Table
+
+Thumbnail
+Roadmap Title
+Category
+Level
+Stages
+Status
+Created Date
+
+View
+Edit
+Stages
+Delete
+
+Add Roadmap
+Pagination
+Delete Confirmation
+```
+
+Your existing roadmap CRUD API structure already supports the main create/read/update/delete operations. 
+
+---
+
+# 7. Add Roadmap Page
+
+### Route
+
+`/admin/roadmaps/add`
+
+### APIs
+
+```text
+POST /api/roadmaps
+GET  /api/categories
+POST /api/upload/course-thumbnail
+```
+
+### UI Components
+
+```text
+Roadmap Form
+
+Roadmap Title
+Description
+Category
+Level
+Thumbnail
+Status
+
+Save Draft
+Create Roadmap
+Cancel
+```
+
+### Flow
+
+```text
+Admin Dashboard
+      ↓
+Roadmap Management
+      ↓
+Add Roadmap
+      ↓
+Enter Details
+      ↓
+Create Roadmap
+      ↓
+Roadmap Management
+```
+
+---
+
+# 8. Edit Roadmap Page
+
+### Route
+
+`/admin/roadmaps/:id/edit`
+
+### APIs
+
+```text
+GET /api/roadmaps/:id
+PUT /api/roadmaps/:id
+GET /api/categories
+```
+
+### UI Components
+
+```text
+Roadmap Title
+Description
+Category
+Level
+Thumbnail
+Status
+
+Update Button
+Cancel Button
+Preview Button
+```
+
+---
+
+# 9. Roadmap Stage Management
+
+This should be a **separate admin page**, because your database has separate `roadmap_stages` and `roadmap_courses` tables. 
+
+### Route
+
+`/admin/roadmaps/:id/stages`
+
+### APIs
+
+Your existing API list only contains:
+
+```text
+GET /api/roadmaps/:id/stages
+```
+
+For complete admin CRUD, add:
+
+```text
+GET    /api/roadmaps/:id/stages
+
+POST   /api/roadmaps/:id/stages
+PUT    /api/roadmap-stages/:id
+DELETE /api/roadmap-stages/:id
+
+POST   /api/roadmap-stages/:id/courses
+DELETE /api/roadmap-courses/:id
+
+PUT    /api/roadmap-stages/:id/order
+```
+
+### UI Components
+
+```text
+Roadmap Header
+
+Stage 1
+    Stage Title
+    Description
+    Order
+
+    Courses
+       Course 1
+       Course 2
+       Course 3
+
+    Add Course
+    Edit Stage
+    Delete Stage
+
+Stage 2
+    ...
+
++ Add Stage
+
+Drag & Drop Ordering
+Save Order
+```
+
+### Example
+
+```text
+Python Developer Roadmap
+────────────────────────────
+
+Stage 1
+Python Basics
+    ├── Python Fundamentals
+    ├── Python Data Types
+    └── Python Control Flow
+
+Stage 2
+Advanced Python
+    ├── OOP
+    ├── Exception Handling
+    └── File Handling
+
+Stage 3
+Python Projects
+    ├── Project Development
+    └── Final Project
+
++ Add Stage
+```
+
+---
+
+# 10. User Management
+
+### Route
+
+`/admin/users`
+
+### APIs
+
+```text
+GET    /api/admin/users
+GET    /api/users/:id
+PUT    /api/users/:id
+DELETE /api/users/:id
+PATCH  /api/users/:id/status
+GET    /api/users/:id/courses
+GET    /api/users/:id/progress
+GET    /api/users/:id/certificates
+GET    /api/users/:id/payments
+```
+
+These operations align with your existing User API design. 
+
+### UI Components
+
+```text
+Search User
+Filter
+Status Filter
+
+User Table
+    Profile
+    Name
+    Email
+    Role
+    Status
+    Registered Date
+
+View User
+Edit User
+Activate
+Deactivate
+Delete
+
+User Details Modal/Page
+    Enrolled Courses
+    Progress
+    Certificates
+    Payments
+```
+
+---
+
+# 11. Enrollment Management
+
+### Route
+
+`/admin/enrollments`
+
+### APIs
+
+```text
+GET   /api/admin/enrollments
+GET   /api/enrollments/:id
+PATCH /api/enrollments/:id/status
+GET   /api/users/:id/enrollments
+```
+
+### UI Components
+
+```text
+Search
+Course Filter
+User Filter
+Status Filter
+
+Enrollment Table
+
+Student
+Course
+Enrollment Date
+Payment Status
+Progress
+Enrollment Status
+
+View
+Change Status
+```
+
+---
+
+# 12. Payment Management
+
+### Route
+
+`/admin/payments`
+
+### APIs
+
+```text
+GET  /api/admin/payments
+GET  /api/payments
+GET  /api/payments/:id
+POST /api/payments/refund
+GET  /api/users/:id/payments
+```
+
+### UI Components
+
+```text
+Payment Statistics
+
+Total Revenue
+Successful Payments
+Pending Payments
+Refunds
+
+Payment Table
+
+Transaction ID
+Student
+Course
+Amount
+Discount
+Final Amount
+Payment Method
+Status
+Payment Date
+
+View Payment
+Refund Payment
+Search
+Filter
+Pagination
+```
+
+---
+
+# New Admin Navigation
+
+Your existing Admin Dashboard can now become the **main admin navigation hub**:
+
+```text
+ADMIN DASHBOARD
+│
+├── Users
+│   └── User Management
+│
+├── Courses
+│   ├── Course Management
+│   ├── Add Course
+│   ├── Edit Course
+│   ├── Course Content
+│   │   ├── Modules
+│   │   └── Lessons
+│   └── Categories
+│
+├── Roadmaps
+│   ├── Roadmap Management
+│   ├── Add Roadmap
+│   ├── Edit Roadmap
+│   └── Roadmap Stages
+│       ├── Add Stage
+│       ├── Edit Stage
+│       ├── Delete Stage
+│       └── Assign Courses
+│
+├── Enrollments
+│
+├── Payments
+│
+├── Certificates
+│
+├── Reviews
+│
+├── Reports
+│
+├── Analytics
+│
+├── Notifications
+│
+├── Activity Logs
+│
+└── Settings
+```
+
+## Recommended final admin page structure
+
+Since you already have the original **15 React pages**, don't count these as replacements. Treat them as **additional Admin CRUD pages**.
+
+```text
+EXISTING
+15 React Pages
+        +
+NEW ADMIN CRUD PAGES
+        │
+        ├── Course Management
+        ├── Add Course
+        ├── Edit Course
+        ├── Course Content
+        ├── Category Management
+        │
+        ├── Roadmap Management
+        ├── Add Roadmap
+        ├── Edit Roadmap
+        ├── Roadmap Stage Management
+        │
+        ├── User Management
+        ├── Enrollment Management
+        └── Payment Management
+```
+
+**Important:** for Course and Roadmap, you don't need to create completely new backend architecture. Your existing CRUD APIs already cover the basic Course/Roadmap create, update and delete operations. What is missing for the admin UI is mainly the **module/lesson CRUD APIs and roadmap-stage/course assignment CRUD APIs**.  
+
+If you're implementing this now, I would build them in this order: **Course Management → Add/Edit Course → Course Content → Roadmap Management → Add/Edit Roadmap → Roadmap Stages**, because those are the core admin CRUD screens.
+
+
+
+
+Yes. Based on your **existing 15 pages + APIs + DB design**, the major missing part is not the student side. The missing part is the **Admin CRUD / Management side**, especially **video/material management, certificate management, reports, quiz/assignment/coding management, coupons, reviews, notifications, files, support, and system settings**.
+
+I will list **only the missing pages** below. If an existing page/API can be reused, I’ll explicitly mark it as **REUSE EXISTING** instead of creating a duplicate.
+
+# CODE RUNNER – MISSING ADMIN PAGES
+
+### Status Legend
+
+* 🆕 **NEW PAGE** = you need to create a new React page
+* ♻️ **REUSE EXISTING** = already covered by your existing page; no new page required
+* 🔧 **API ADDITION** = existing page can remain, but backend CRUD APIs are missing
+
+---
+ 
+
+# 2. Lesson Management
+
+### 🆕 Page / Sub-page
+
+`/admin/courses/:courseId/content/:moduleId`
+
+You don't necessarily need a completely separate top-level page. It can be a **sub-page inside Course Content**.
+
+### APIs
+
+```text
+GET    /api/modules/:id/lessons
+POST   /api/modules/:id/lessons
+GET    /api/lessons/:id
+PUT    /api/lessons/:id
+DELETE /api/lessons/:id
+```
+
+### UI Components
+
+```text
+Lesson List
+Add Lesson
+Edit Lesson
+Delete Lesson
+Lesson Title
+Description
+Lesson Type
+Video
+Text
+PDF
+Coding
+Quiz
+Assignment
+Duration
+Order
+Free/Paid
+Status
+Preview
+```
+
+---
+🆕 Instructor Management
+
+Route:
+
+/admin/instructors
+APIs
+GET    /api/admin/instructors
+GET    /api/instructors/:id
+POST   /api/instructors
+PUT    /api/instructors/:id
+DELETE /api/instructors/:id
+PATCH  /api/instructors/:id/status
+
+GET    /api/instructors/:id/courses
+GET    /api/instructors/:id/students
+GET    /api/instructors/:id/analytics
+UI Components
+Instructor Management
+├── Search Instructor
+├── Filter
+├── Add Instructor
+│
+├── Instructor Table
+│   ├── Profile Image
+│   ├── Name
+│   ├── Email
+│   ├── Specialization
+│   ├── Courses Count
+│   ├── Students Count
+│   ├── Status
+│   └── Actions
+│
+├── View Instructor
+├── Edit Instructor
+├── Activate / Deactivate
+└── Delete Instructor
+
+
+# 3. Video Management
+
+This is one of the important things you identified as missing.
+
+### 🆕 Page
+
+`/admin/videos`
+
+### Purpose
+
+```text
+Upload Video
+View Videos
+Edit Video Details
+Delete Video
+Replace Video
+Video Preview
+Video Status
+Video Search
+```
+
+### APIs
+
+Your current API has upload only:
+
+```text
+POST /api/upload/video
+```
+
+Add:
+
+```text
+GET    /api/videos
+GET    /api/videos/:id
+POST   /api/upload/video
+PUT    /api/videos/:id
+DELETE /api/videos/:id
+PATCH  /api/videos/:id/status
+```
+
+### UI Components
+
+```text
+Video Management Header
+Upload Video Button
+Video Upload Modal/Page
+Video Table
+Video Thumbnail
+Video Title
+Course
+Module
+Lesson
+Duration
+File Size
+Status
+Uploaded Date
+
+Preview Video
+Edit
+Replace
+Delete
+Activate/Deactivate
+Search
+Filter
+Pagination
+Delete Confirmation
+```
+
+### Navigation
+
+```text
+Admin Dashboard
+      ↓
+Course Management
+      ↓
+Course Content
+      ↓
+Lesson
+      ↓
+Video Management
+      ├── Upload
+      ├── Preview
+      ├── Edit
+      ├── Replace
+      └── Delete
+```
+
+---
+
+# 4. PDF / Learning Material Management
+
+### 🆕 Page
+
+`/admin/materials`
+
+### APIs
+
+Existing:
+
+```text
+POST /api/upload/material
+GET  /api/lessons/:id/materials
+```
+
+Add:
+
+```text
+GET    /api/materials
+GET    /api/materials/:id
+PUT    /api/materials/:id
+DELETE /api/materials/:id
+POST   /api/upload/material
+```
+
+### UI Components
+
+```text
+Material Table
+Upload PDF
+Material Name
+Course
+Module
+Lesson
+File Type
+File Size
+Preview
+Download
+Edit
+Replace
+Delete
+Search
+Filter
+```
+
+---
+
+# 5. File Management
+
+You already have several upload APIs, but no central admin page.
+
+### 🆕 Page
+
+`/admin/files`
+
+### APIs
+
+```text
+POST /api/upload/profile
+POST /api/upload/course-thumbnail
+POST /api/upload/video
+POST /api/upload/material
+POST /api/upload/assignment
+```
+
+Add central management:
+
+```text
+GET    /api/files
+GET    /api/files/:id
+DELETE /api/files/:id
+```
+
+### UI Components
+
+```text
+File Manager
+File Search
+File Type Filter
+
+Images
+Videos
+PDFs
+Assignments
+
+File Name
+File Type
+File Size
+Uploaded By
+Uploaded Date
+Used In
+Preview
+Download
+Delete
+```
+
+---
+
+# 6. Certificate Management
+
+This is definitely a missing important admin page.
+
+### 🆕 Page
+
+`/admin/certificates`
+
+### APIs
+
+Existing:
+
+```text
+GET  /api/certificates
+GET  /api/certificates/:id
+POST /api/certificates/generate
+GET  /api/certificates/:id/download
+GET  /api/certificates/verify/:certificateId
+```
+
+Add admin operations if needed:
+
+```text
+PUT    /api/certificates/:id
+DELETE /api/certificates/:id
+PATCH  /api/certificates/:id/status
+```
+
+### UI Components
+
+```text
+Certificate Statistics
+
+Total Certificates
+Issued
+Pending
+Revoked
+
+Certificate Table
+
+Certificate ID
+Student
+Course
+Issue Date
+Status
+
+View Certificate
+Generate Certificate
+Download
+Verify
+Revoke
+Delete
+Search
+Filter
+```
+
+### Navigation
+
+```text
+Admin
+ ↓
+Certificates
+ ├── All Certificates
+ ├── Generate
+ ├── View
+ ├── Download
+ ├── Verify
+ └── Revoke
+```
+
+---
+
+# 7. Certificate Template Management
+
+This is an additional important item if you want a proper certificate system.
+
+### 🆕 Page
+
+`/admin/certificates/templates`
+
+### APIs
+
+```text
+GET    /api/certificate-templates
+POST   /api/certificate-templates
+PUT    /api/certificate-templates/:id
+DELETE /api/certificate-templates/:id
+PATCH  /api/certificate-templates/:id/status
+```
+
+### UI
+
+```text
+Template List
+Create Template
+Edit Template
+Delete Template
+Certificate Preview
+Logo Upload
+Signature Upload
+Background Upload
+Template Status
+```
+
+---
+
+# 8. Quiz Management
+
+Your student side has quiz APIs, but your admin side doesn't have quiz CRUD.
+
+### 🆕 Page
+
+`/admin/quizzes`
+
+### APIs
+
+Add:
+
+```text
+GET    /api/quizzes
+POST   /api/quizzes
+GET    /api/quizzes/:id
+PUT    /api/quizzes/:id
+DELETE /api/quizzes/:id
+PATCH  /api/quizzes/:id/status
+```
+
+### UI Components
+
+```text
+Quiz Table
+Course
+Lesson
+Quiz Title
+Duration
+Passing Score
+Attempts
+
+Add Quiz
+Edit Quiz
+Delete Quiz
+Activate/Deactivate
+Manage Questions
+```
+
+---
+
+# 9. Quiz Question Management
+
+### 🆕 Page
+
+`/admin/quizzes/:quizId/questions`
+
+### APIs
+
+```text
+GET    /api/quizzes/:id/questions
+POST   /api/quizzes/:id/questions
+PUT    /api/questions/:id
+DELETE /api/questions/:id
+```
+
+### UI Components
+
+```text
+Question List
+Question Text
+Question Type
+Options
+Correct Answer
+Marks
+Order
+
+Add Question
+Edit Question
+Delete Question
+Reorder Questions
+```
+
+### Navigation
+
+```text
+Quiz Management
+      ↓
+Select Quiz
+      ↓
+Question Management
+```
+
+---
+
+# 10. Assignment Management
+
+### 🆕 Page
+
+`/admin/assignments`
+
+### APIs
+
+Existing student APIs:
+
+```text
+GET /api/assignments/:id
+POST /api/assignments/:id/submit
+GET /api/assignments/:id/submissions
+POST /api/submissions/:id/evaluate
+```
+
+Add admin CRUD:
+
+```text
+GET    /api/assignments
+POST   /api/assignments
+PUT    /api/assignments/:id
+DELETE /api/assignments/:id
+PATCH  /api/assignments/:id/status
+```
+
+### UI
+
+```text
+Assignment Table
+Course
+Lesson
+Title
+Deadline
+Max Marks
+Status
+
+Add
+Edit
+Delete
+View Submissions
+Evaluate
+```
+
+---
+
+# 11. Assignment Submission / Evaluation
+
+### 🆕 Page
+
+`/admin/assignments/:id/submissions`
+
+### APIs
+
+```text
+GET  /api/assignments/:id/submissions
+POST /api/submissions/:id/evaluate
+```
+
+### UI
+
+```text
+Student
+Submission
+Submitted Date
+File
+Code
+Marks
+Feedback
+Status
+
+View Submission
+Download
+Evaluate
+Give Marks
+Give Feedback
+Approve / Reject
+```
+
+---
+
+# 12. Coding Problem Management
+
+Your student coding APIs exist, but admins need CRUD.
+
+### 🆕 Page
+
+`/admin/coding/problems`
+
+### APIs
+
+```text
+GET    /api/coding/problems
+POST   /api/coding/problems
+GET    /api/coding/problems/:id
+PUT    /api/coding/problems/:id
+DELETE /api/coding/problems/:id
+```
+
+### UI
+
+```text
+Problem List
+Title
+Difficulty
+Language
+Status
+
+Add Problem
+Edit
+Delete
+View
+Manage Test Cases
+```
+
+---
+
+# 13. Coding Test Case Management
+
+### 🆕 Page / Sub-page
+
+`/admin/coding/problems/:id/test-cases`
+
+### APIs
+
+```text
+GET    /api/coding/problems/:id/test-cases
+POST   /api/coding/problems/:id/test-cases
+PUT    /api/coding/test-cases/:id
+DELETE /api/coding/test-cases/:id
+```
+
+### UI
+
+```text
+Test Case List
+Input
+Expected Output
+Hidden / Public
+Marks
+Add
+Edit
+Delete
+```
+
+---
+
+# 14. Coupon Management
+
+You already have coupon APIs but no dedicated admin page.
+
+### 🆕 Page
+
+`/admin/coupons`
+
+### APIs
+
+```text
+GET    /api/coupons
+POST   /api/coupons
+PUT    /api/coupons/:id
+DELETE /api/coupons/:id
+```
+
+### UI
+
+```text
+Coupon Table
+Coupon Code
+Discount Type
+Discount Value
+Minimum Amount
+Usage Limit
+Used Count
+Start Date
+End Date
+Status
+
+Add Coupon
+Edit
+Delete
+Activate/Deactivate
+```
+
+---
+
+# 15. Review Management
+
+### 🆕 Page
+
+`/admin/reviews`
+
+### APIs
+
+```text
+GET    /api/admin/reviews
+GET    /api/courses/:id/reviews
+PUT    /api/reviews/:id
+DELETE /api/reviews/:id
+PATCH  /api/reviews/:id/status
+```
+
+### UI
+
+```text
+Review Table
+Student
+Course
+Rating
+Review
+Date
+Status
+
+Approve
+Reject
+Edit
+Delete
+Search
+Filter
+```
+
+---
+
+# 16. Notification Management
+
+### 🆕 Page
+
+`/admin/notifications`
+
+### APIs
+
+Existing student APIs:
+
+```text
+GET    /api/notifications
+PATCH  /api/notifications/:id/read
+PATCH  /api/notifications/read-all
+DELETE /api/notifications/:id
+```
+
+Add admin:
+
+```text
+POST   /api/admin/notifications
+GET    /api/admin/notifications
+PUT    /api/admin/notifications/:id
+DELETE /api/admin/notifications/:id
+```
+
+### UI
+
+```text
+Notification List
+Create Notification
+Title
+Message
+Target Users
+Notification Type
+Schedule
+Send
+Edit
+Delete
+```
+
+---
+
+# 17. Announcement Management
+
+### 🆕 Page
+
+`/admin/announcements`
+
+### APIs
+
+```text
+GET    /api/announcements
+POST   /api/announcements
+PUT    /api/announcements/:id
+DELETE /api/announcements/:id
+PATCH  /api/announcements/:id/status
+```
+
+### UI
+
+```text
+Announcement List
+Create Announcement
+Title
+Message
+Target Audience
+Status
+Publish Date
+Edit
+Delete
+Publish
+Unpublish
+```
+
+---
+
+# 18. Support Ticket Management
+
+### 🆕 Page
+
+`/admin/support`
+
+### APIs
+
+```text
+GET    /api/admin/support-tickets
+GET    /api/support-tickets/:id
+PATCH  /api/support-tickets/:id/status
+POST   /api/support-tickets/:id/reply
+```
+
+### UI
+
+```text
+Ticket List
+Ticket ID
+Student
+Subject
+Priority
+Status
+Created Date
+
+Ticket Details
+Conversation
+Reply
+Change Status
+Priority
+Close Ticket
+```
+
+---
+
+# 19. Reports Management
+
+This is another **major missing page**.
+
+### 🆕 Page
+
+`/admin/reports`
+
+### APIs
+
+Your current API has:
+
+```text
+GET /api/admin/reports
+```
+
+Add specific report APIs if required:
+
+```text
+GET /api/admin/reports/users
+GET /api/admin/reports/courses
+GET /api/admin/reports/enrollments
+GET /api/admin/reports/payments
+GET /api/admin/reports/certificates
+GET /api/admin/reports/learning
+```
+
+### UI Components
+
+```text
+Report Dashboard
+
+User Reports
+Course Reports
+Enrollment Reports
+Payment Reports
+Certificate Reports
+Learning Reports
+
+Date Range
+Course Filter
+User Filter
+Status Filter
+
+Generate Report
+Export PDF
+Export Excel
+Print
+```
+
+### Navigation
+
+```text
+Admin Dashboard
+      ↓
+Reports
+      ├── User Reports
+      ├── Course Reports
+      ├── Enrollment Reports
+      ├── Payment Reports
+      ├── Certificate Reports
+      └── Learning Reports
+```
+
+---
+
+# 20. Analytics Management
+
+You already have analytics in Admin Dashboard, so **don't create another dashboard**.
+
+### ♻️ REUSE EXISTING
+
+Existing:
+
+```text
+/admin
+```
+
+Existing API:
+
+```text
+GET /api/admin/analytics
+```
+
+But expand the existing Admin Dashboard with:
+
+```text
+User Analytics
+Course Analytics
+Enrollment Analytics
+Revenue Analytics
+Certificate Analytics
+Learning Analytics
+```
+
+No separate React page is required unless you want a dedicated analytics screen.
+
+---
+
+# 21. Activity Log Management
+
+### 🆕 Page
+
+`/admin/activity-logs`
+
+### API
+
+```text
+GET /api/admin/activity-logs
+```
+
+Optional:
+
+```text
+GET /api/admin/activity-logs/:id
+```
+
+### UI
+
+```text
+Activity Log Table
+User
+Action
+Module
+Description
+IP Address
+Date
+
+Search
+User Filter
+Module Filter
+Action Filter
+Date Filter
+View Details
+```
+
+---
+
+# 22. Admin / Role / Permission Management
+
+Your feature list has:
+
+```text
+Admin Management
+Admin Role Management
+Admin Permission Management
+Role-Based Access Control
+Permission-Based Access Control
+```
+
+But there is no dedicated admin page for these.
+
+### 🆕 Page
+
+`/admin/admins`
+
+### APIs
+
+```text
+GET    /api/admin/admins
+POST   /api/admin/admins
+GET    /api/admin/admins/:id
+PUT    /api/admin/admins/:id
+DELETE /api/admin/admins/:id
+PATCH  /api/admin/admins/:id/status
+```
+
+### UI
+
+```text
+Admin List
+Name
+Email
+Role
+Status
+Last Login
+
+Add Admin
+Edit Admin
+Delete
+Activate/Deactivate
+```
+
+---
+
+# 23. Role & Permission Management
+
+### 🆕 Page
+
+`/admin/roles-permissions`
+
+### APIs
+
+```text
+GET    /api/roles
+POST   /api/roles
+PUT    /api/roles/:id
+DELETE /api/roles/:id
+
+GET    /api/permissions
+POST   /api/permissions
+PUT    /api/permissions/:id
+DELETE /api/permissions/:id
+
+POST   /api/roles/:id/permissions
+DELETE /api/roles/:id/permissions/:permissionId
+```
+
+### UI
+
+```text
+Role List
+Permission List
+Create Role
+Edit Role
+Delete Role
+
+Permission Matrix
+
+Users
+Courses
+Roadmaps
+Payments
+Certificates
+Reports
+Settings
+
+View
+Create
+Edit
+Delete
+Manage
+```
+
+---
+
+# 24. Content / Homepage Management
+
+Your feature list contains:
+
+```text
+Content Management
+Homepage Management
+Banner Management
+Terms & Conditions
+Privacy Policy
+```
+
+But no admin pages exist for these.
+
+### 🆕 Page
+
+`/admin/content`
+
+### UI
+
+```text
+Homepage Content
+Banner Management
+FAQ Management
+Terms & Conditions
+Privacy Policy
+Help Center Content
+```
+
+Could be a tab-based page instead of creating 6 separate pages.
+
+### APIs
+
+```text
+GET    /api/admin/content
+PUT    /api/admin/content
+
+GET    /api/admin/banners
+POST   /api/admin/banners
+PUT    /api/admin/banners/:id
+DELETE /api/admin/banners/:id
+```
+
+---
+
+# 25. FAQ Management
+
+### 🆕 Page / Tab
+
+`/admin/content/faq`
+
+### APIs
+
+```text
+GET    /api/faqs
+POST   /api/faqs
+PUT    /api/faqs/:id
+DELETE /api/faqs/:id
+PATCH  /api/faqs/:id/status
+```
+
+### UI
+
+```text
+FAQ List
+Question
+Answer
+Category
+Status
+Order
+
+Add FAQ
+Edit
+Delete
+Reorder
+Publish
+```
+
+---
+
+# 26. System Settings
+
+### 🆕 Page
+
+`/admin/settings`
+
+You already have settings APIs, but no dedicated admin page.
+
+### APIs
+
+```text
+GET /api/settings
+PUT /api/settings
+```
+
+### UI
+
+```text
+General Settings
+Site Name
+Logo
+Email
+Phone
+
+Course Settings
+Payment Settings
+Certificate Settings
+Notification Settings
+Security Settings
+AI Settings
+
+Save Changes
+```
+
+---
+
+# 27. Payment / Refund Management
+
+You already planned Payment Management, so **do not create another Payment page**.
+
+### ♻️ REUSE EXISTING
+
+```text
+/admin/payments
+```
+
+But add these components:
+
+```text
+Refund Button
+Refund Status
+Transaction Details
+Payment Verification
+Invoice
+Payment History
+```
+
+### Existing APIs
+
+```text
+GET  /api/admin/payments
+GET  /api/payments/:id
+POST /api/payments/refund
+GET  /api/users/:id/payments
+```
+
+---
+
+# 28. User Management
+
+You already planned this page.
+
+### ♻️ REUSE EXISTING
+
+```text
+/admin/users
+```
+
+Add:
+
+```text
+Activity
+Enrollment History
+Progress
+Certificates
+Payments
+Account Status
+Activate
+Deactivate
+```
+
+No duplicate page needed.
+
+---
+
+# 29. Roadmap Stage Management
+
+You already planned this page.
+
+### ♻️ REUSE EXISTING
+
+```text
+/admin/roadmaps/:id/stages
+```
+
+But add:
+
+```text
+Add Stage
+Edit Stage
+Delete Stage
+Reorder Stage
+Assign Course
+Remove Course
+Reorder Courses
+```
+
+Required APIs:
+
+```text
+GET    /api/roadmaps/:id/stages
+POST   /api/roadmaps/:id/stages
+PUT    /api/roadmap-stages/:id
+DELETE /api/roadmap-stages/:id
+
+POST   /api/roadmap-stages/:id/courses
+DELETE /api/roadmap-courses/:id
+PUT    /api/roadmap-stages/:id/order
+```
+
+---
+
+# Final Missing Pages List
+
+Here is the **clean list of pages you actually need to add**, excluding pages you already have:
+
+|  # | Missing Page                    | Route                                        |
+| -: | ------------------------------- | -------------------------------------------- |
+|  1 | Course Content Management       | `/admin/courses/:id/content`                 |
+|  2 | Lesson Management               | `/admin/courses/:courseId/content/:moduleId` |
+|  3 | Video Management                | `/admin/videos`                              |
+|  4 | Material/PDF Management         | `/admin/materials`                           |
+|  5 | File Management                 | `/admin/files`                               |
+|  6 | Certificate Management          | `/admin/certificates`                        |
+|  7 | Certificate Template Management | `/admin/certificates/templates`              |
+|  8 | Quiz Management                 | `/admin/quizzes`                             |
+|  9 | Quiz Question Management        | `/admin/quizzes/:quizId/questions`           |
+| 10 | Assignment Management           | `/admin/assignments`                         |
+| 11 | Assignment Evaluation           | `/admin/assignments/:id/submissions`         |
+| 12 | Coding Problem Management       | `/admin/coding/problems`                     |
+| 13 | Coding Test Case Management     | `/admin/coding/problems/:id/test-cases`      |
+| 14 | Coupon Management               | `/admin/coupons`                             |
+| 15 | Review Management               | `/admin/reviews`                             |
+| 16 | Notification Management         | `/admin/notifications`                       |
+| 17 | Announcement Management         | `/admin/announcements`                       |
+| 18 | Support Ticket Management       | `/admin/support`                             |
+| 19 | Reports Management              | `/admin/reports`                             |
+| 20 | Activity Log Management         | `/admin/activity-logs`                       |
+| 21 | Admin Management                | `/admin/admins`                              |
+| 22 | Role & Permission Management    | `/admin/roles-permissions`                   |
+| 23 | Content Management              | `/admin/content`                             |
+| 24 | FAQ Management                  | `/admin/content/faq`                         |
+| 25 | System Settings                 | `/admin/settings`                            |
+
+---
+
+# Pages You DON'T Need to Create Again
+
+These are already covered by your existing pages/planned pages:
+
+| Existing                 | Keep / Expand      |
+| ------------------------ | ------------------ |
+| Home                     | ♻️ Existing        |
+| Login                    | ♻️ Existing        |
+| Register                 | ♻️ Existing        |
+| Student Dashboard        | ♻️ Existing        |
+| Courses                  | ♻️ Existing        |
+| Course Details           | ♻️ Existing        |
+| Learning / Course Player | ♻️ Existing        |
+| Roadmap                  | ♻️ Existing        |
+| Roadmap Details          | ♻️ Existing        |
+| Checkout                 | ♻️ Existing        |
+| My Courses               | ♻️ Existing        |
+| Certificates — student   | ♻️ Existing        |
+| AI Chatbot               | ♻️ Existing        |
+| Profile                  | ♻️ Existing        |
+| Admin Dashboard          | ♻️ Existing        |
+| Course Management        | ♻️ Already planned |
+| Add Course               | ♻️ Already planned |
+| Edit Course              | ♻️ Already planned |
+| Roadmap Management       | ♻️ Already planned |
+| Add Roadmap              | ♻️ Already planned |
+| Edit Roadmap             | ♻️ Already planned |
+| Roadmap Stage Management | ♻️ Already planned |
+| User Management          | ♻️ Already planned |
+| Enrollment Management    | ♻️ Already planned |
+| Payment Management       | ♻️ Already planned |
+
+---
+
+# Most Important Missing Pages
+
+If you don't want to build all 25 immediately, these are the **highest priority**:
+
+```text
+1. Course Content Management
+2. Lesson Management
+3. Video Management
+4. Material/PDF Management
+5. Certificate Management
+6. Quiz Management
+7. Quiz Question Management
+8. Assignment Management
+9. Assignment Evaluation
+10. Coding Problem Management
+11. Coding Test Case Management
+12. Coupon Management
+13. Review Management
+14. Reports Management
+15. Activity Log Management
+16. Admin Management
+17. Role & Permission Management
+18. Notification Management
+19. Support Ticket Management
+20. System Settings
+```
+
+### Overall Admin navigation after adding these
+
+```text
+ADMIN DASHBOARD
+│
+├── USERS
+│   └── User Management
+│
+├── ADMINS
+│   ├── Admin Management
+│   └── Roles & Permissions
+│
+├── COURSES
+│   ├── Course Management
+│   ├── Add Course
+│   ├── Edit Course
+│   ├── Course Content
+│   │   ├── Modules
+│   │   └── Lessons
+│   ├── Videos
+│   ├── Materials / PDFs
+│   ├── Categories
+│   ├── Quizzes
+│   │   └── Questions
+│   ├── Assignments
+│   │   └── Submissions / Evaluation
+│   └── Coding Problems
+│       └── Test Cases
+│
+├── ROADMAPS
+│   ├── Roadmap Management
+│   ├── Add Roadmap
+│   ├── Edit Roadmap
+│   └── Stages
+│       └── Assign Courses
+│
+├── ENROLLMENTS
+│
+├── PAYMENTS
+│   ├── Transactions
+│   ├── Invoices
+│   └── Refunds
+│
+├── COUPONS
+│
+├── CERTIFICATES
+│   ├── Certificates
+│   └── Templates
+│
+├── REVIEWS
+│
+├── NOTIFICATIONS
+│
+├── ANNOUNCEMENTS
+│
+├── SUPPORT
+│
+├── REPORTS
+│
+├── ANALYTICS
+│
+├── ACTIVITY LOGS
+│
+├── CONTENT
+│   ├── Homepage
+│   ├── Banners
+│   ├── FAQ
+│   ├── Terms
+│   └── Privacy Policy
+│
+├── FILES
+│   ├── Videos
+│   ├── PDFs
+│   ├── Images
+│   └── Assignments
+│
+└── SETTINGS
+```
+
+**The biggest gap in your current project is that you have the feature/API/database definitions for many modules, but not the corresponding Admin CRUD interfaces.** In particular, **Video → Material → Lesson → Quiz → Assignment → Coding → Certificate → Reports** should be treated as the main missing management chain.
